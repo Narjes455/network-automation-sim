@@ -103,10 +103,8 @@ python main.py
 - Python
 - إدارة البنية التحتية للشبكات
 
-🔗 LinkedIn
-
-🐙 GitHub
-
+‏[🔗 LinkedIn](https://www.linkedin.com/in/نرجس-العمري-757b68273?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
+‏[🐙 GitHub](https://github.com/Narjes455)
 ---
 
 > المشروع ما زال قيد التطوير ويتم تحديثه بشكل مستمر لإضافة مزيد من خصائص أتمتة الشبكات.

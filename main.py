@@ -1,37 +1,27 @@
-from core.device import NetworkDevice
 from core.simulator import NetworkSimulator
+from core.device_loader import load_devices
+from core.backup_manager import create_backup
 from core.config_manager import save_config
-from core.diff_engine import compare_configs
 from core.logger import log
 
-# إنشاء محاكي الشبكة
+# إنشاء المحاكي
 sim = NetworkSimulator()
 
-# جهاز وهمي
-device1 = NetworkDevice(
-    "Router1",
-    "192.168.1.1",
-    "interface g0/0\n ip address 192.168.1.1"
-)
+# تحميل الأجهزة من devices.json
+devices = load_devices()
 
-sim.add_device(device1)
+for device in devices:
 
-# حفظ config
-save_config(device1)
-log("Initial config saved")
+    sim.add_device(device)
 
-# تعديل config (محاكاة تغيير شبكات)
-old_config = device1.show_config()
+    # حفظ الإعدادات
+    save_config(device)
 
-device1.update_config(
-    "interface g0/0\n ip address 10.0.0.1"
-)
+    # إنشاء نسخة احتياطية
+    backup_file = create_backup(device)
 
-new_config = device1.show_config()
+    log(f"Backup created for {device.name}")
 
-# مقارنة التغييرات
-changes = compare_configs(old_config, new_config)
+    print(f"✅ Backup created: {backup_file}")
 
-for c in changes:
-    log(c)
-    print(c)
+print("\n🎉 All devices processed successfully")

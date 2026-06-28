@@ -3,15 +3,20 @@ from core.device_loader import load_devices
 from core.backup_manager import create_backup
 from core.config_manager import save_config
 from core.logger import log
+from core.report_generator import generate_report
+
+print("🚀 Starting Network Automation Simulation...\n")
 
 # إنشاء المحاكي
 sim = NetworkSimulator()
 
-# تحميل الأجهزة من devices.json
+# تحميل الأجهزة من ملف JSON
 devices = load_devices()
 
+# معالجة الأجهزة
 for device in devices:
 
+    # إضافة الجهاز للمحاكي
     sim.add_device(device)
 
     # حفظ الإعدادات
@@ -20,8 +25,14 @@ for device in devices:
     # إنشاء نسخة احتياطية
     backup_file = create_backup(device)
 
+    # تسجيل العملية
     log(f"Backup created for {device.name}")
 
+    # عرض النتيجة
     print(f"✅ Backup created: {backup_file}")
 
-print("\n🎉 All devices processed successfully")
+# إنشاء التقرير النهائي
+generate_report()
+
+print("\n📄 Report generated successfully")
+print("🎉 All devices processed successfully")

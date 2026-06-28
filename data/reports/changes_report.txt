@@ -1,0 +1,9 @@
+=========================
+Network Automation Report
+=========================
+
+- Router1
+- Switch1
+- Firewall1
+
+Total Devices: 3

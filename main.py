@@ -31,8 +31,9 @@ for device in devices:
     # عرض النتيجة
     print(f"✅ Backup created: {backup_file}")
 
-# إنشاء التقرير النهائي
-generate_report()
+# إنشاء تقرير التغييرات
+report_file = generate_report()
 
-print("\n📄 Report generated successfully")
+print(f"\n📄 Change report created: {report_file}")
+
 print("🎉 All devices processed successfully")

@@ -1,25 +1,26 @@
-import os
+from core.diff_engine import compare_configs
+
 
 def generate_report():
 
-    os.makedirs("data/reports", exist_ok=True)
+    with open("data/configs/previous_config.txt", "r") as old_file:
+        old_config = old_file.read()
 
-    devices = [
-        "Router1",
-        "Switch1",
-        "Firewall1"
-    ]
+    with open("data/configs/current_config.txt", "r") as new_file:
+        new_config = new_file.read()
+
+    differences = compare_configs(old_config, new_config)
 
     report_path = "data/reports/changes_report.txt"
 
-    with open(report_path, "w", encoding="utf-8") as report:
-        report.write("=========================\n")
-        report.write("Network Automation Report\n")
-        report.write("=========================\n\n")
+    with open(report_path, "w") as report:
 
-        for device in devices:
-            report.write(f"- {device}\n")
+        report.write("=== Configuration Change Report ===\n\n")
 
-        report.write(f"\nTotal Devices: {len(devices)}")
+        if differences:
+            for line in differences:
+                report.write(line + "\n")
+        else:
+            report.write("No changes detected.\n")
 
     return report_path

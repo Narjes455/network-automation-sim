@@ -1,9 +1,8 @@
-=========================
-Network Automation Report
-=========================
+=== Configuration Change Report ===
 
-- Router1
-- Switch1
-- Firewall1
-
-Total Devices: 3
+--- 
++++ 
+@@ -1,2 +1,2 @@
+ interface g0/0
+-ip address 192.168.1.1
++ip address 10.0.0.1

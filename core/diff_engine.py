@@ -1,15 +1,15 @@
-def compare_configs(old, new):
-    changes = []
+import difflib
 
-    old_lines = old.splitlines()
-    new_lines = new.splitlines()
 
-    for line in new_lines:
-        if line not in old_lines:
-            changes.append(f"ADDED: {line}")
+def compare_configs(old_config, new_config):
 
-    for line in old_lines:
-        if line not in new_lines:
-            changes.append(f"REMOVED: {line}")
+    old_lines = old_config.splitlines()
+    new_lines = new_config.splitlines()
 
-    return changes
+    diff = difflib.unified_diff(
+        old_lines,
+        new_lines,
+        lineterm=""
+    )
+
+    return list(diff)

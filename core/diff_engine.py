@@ -6,10 +6,12 @@ def compare_configs(old_config, new_config):
     old_lines = old_config.splitlines()
     new_lines = new_config.splitlines()
 
-    diff = difflib.unified_diff(
-        old_lines,
-        new_lines,
-        lineterm=""
+    diff = list(
+        difflib.unified_diff(
+            old_lines,
+            new_lines,
+            lineterm=""
+        )
     )
 
-    return list(diff)
+    return diff

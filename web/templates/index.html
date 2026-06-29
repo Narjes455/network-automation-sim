@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Network Automation Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <h1>🌐 Network Automation Dashboard</h1>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>Devices</h2>
+            <p>{{ devices }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Backups</h2>
+            <p>{{ backups }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Alerts</h2>
+            <p>{{ alerts }}</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

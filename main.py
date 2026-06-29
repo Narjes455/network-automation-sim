@@ -1,39 +1,37 @@
-from core.simulator import NetworkSimulator
 from core.device_loader import load_devices
-from core.backup_manager import create_backup
+from core.simulator import NetworkSimulator
 from core.config_manager import save_config
+from core.backup_manager import create_backup
 from core.logger import log
 from core.report_generator import generate_report
+from core.scheduler import run_scheduler
 
-print("🚀 Starting Network Automation Simulation...\n")
+print("🚀 Starting Network Automation Simulation...")
 
-# إنشاء المحاكي
-sim = NetworkSimulator()
 
-# تحميل الأجهزة من ملف JSON
-devices = load_devices()
+def backup_job():
 
-# معالجة الأجهزة
-for device in devices:
+    sim = NetworkSimulator()
 
-    # إضافة الجهاز للمحاكي
-    sim.add_device(device)
+    devices = load_devices()
 
-    # حفظ الإعدادات
-    save_config(device)
+    for device in devices:
 
-    # إنشاء نسخة احتياطية
-    backup_file = create_backup(device)
+        sim.add_device(device)
 
-    # تسجيل العملية
-    log(f"Backup created for {device.name}")
+        save_config(device)
 
-    # عرض النتيجة
-    print(f"✅ Backup created: {backup_file}")
+        backup_file = create_backup(device)
 
-# إنشاء تقرير التغييرات
-report_file = generate_report()
+        log(f"Backup created for {device.name}")
 
-print(f"\n📄 Change report created: {report_file}")
+        print(f"✅ Backup created: {backup_file}")
 
-print("🎉 All devices processed successfully")
+    report_file = generate_report()
+
+    print(f"\n📄 Change report created: {report_file}")
+
+    print("🎉 All devices processed successfully")
+
+
+run_scheduler(backup_job)

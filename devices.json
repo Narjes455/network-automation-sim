@@ -1,19 +1,5 @@
-[
-    {
-        "name": "Router1",
-        "ip": "192.168.1.1",
-        "config": "interface g0/0\nip address 192.168.1.1"
-    },
-
-    {
-        "name": "Switch1",
-        "ip": "192.168.1.2",
-        "config": "vlan 10\nname SALES"
-    },
-
-    {
-        "name": "Firewall1",
-        "ip": "192.168.1.3",
-        "config": "allow tcp 80"
-    }
-]
+{
+  "host": "10.10.20.48",
+  "username": "YOUR_USERNAME",
+  "password": "YOUR_PASSWORD"
+}

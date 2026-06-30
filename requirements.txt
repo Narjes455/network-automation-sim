@@ -1,0 +1,6 @@
+netmiko
+paramiko
+flask
+schedule
+rich
+tabulate

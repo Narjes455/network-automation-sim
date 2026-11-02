@@ -10,6 +10,8 @@ def compare_configs(old_config, new_config):
         difflib.unified_diff(
             old_lines,
             new_lines,
+            fromfile="last_backup",
+            tofile="current_config",
             lineterm=""
         )
     )

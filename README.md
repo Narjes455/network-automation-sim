@@ -38,7 +38,7 @@
 # 📦 تثبيت المتطلبات
 
 ```bash
-pip install flask schedule netmiko paramiko rich tabulate
+pip install -r requirements.txt
 ```
 
 ---
@@ -46,51 +46,70 @@ pip install flask schedule netmiko paramiko rich tabulate
 # 📁 هيكل المشروع
 
 ```text
-Network-Automation-System
+network-automation-sim
 │
-├── main.py
-├── device.py
-├── simulator.py
-├── device_loader.py
-├── backup_manager.py
-├── config_manager.py
-├── diff_engine.py
-├── report_generator.py
-├── alert_manager.py
-├── scheduler.py
-├── logger.py
+├── main.py                 # تشغيل المحاكاة (فحص + نسخ احتياطي + تنبيهات + جدولة)
+├── devices.json            # قائمة الأجهزة المحاكاة (الاسم، IP، النوع، الإعدادات)
+├── .env.example            # نموذج بيانات الاتصال بالجهاز الحقيقي
 │
-├── connect_device.py
-├── show_interfaces.py
-├── backup_config.py
+├── connect_device.py       # جهاز حقيقي: اختبار الاتصال + show version
+├── show_interfaces.py      # جهاز حقيقي: show ip interface brief
+├── backup_config.py        # جهاز حقيقي: نسخة احتياطية من running-config
 │
-├── devices.json
-├── backup.txt
+├── core/
+│   ├── device.py           # كلاس الجهاز
+│   ├── device_loader.py    # تحميل الأجهزة من devices.json
+│   ├── simulator.py        # المحاكي
+│   ├── config_manager.py   # حفظ الإعدادات الحالية
+│   ├── backup_manager.py   # النسخ الاحتياطية وآخر نسخة لكل جهاز
+│   ├── diff_engine.py      # مقارنة الإعدادات (difflib)
+│   ├── alert_manager.py    # التنبيهات
+│   ├── report_generator.py # تقرير التغييرات
+│   ├── scheduler.py        # الجدولة كل دقيقة
+│   ├── ssh_settings.py     # قراءة بيانات SSH من .env
+│   └── logger.py           # السجل
 │
-├── web/
+├── web/                    # لوحة التحكم (Flask)
 │   ├── app.py
-│   ├── templates/
-│   │   └── index.html
-│   └── static/
-│       └── style.css
+│   ├── templates/index.html
+│   └── static/style.css
 │
-├── data/
-│   ├── configs/
-│   ├── backups/
-│   └── reports/
-│
-└── logs/
+└── data/
+    ├── configs/            # الإعدادات الحالية لكل جهاز
+    ├── backups/            # تنشأ تلقائياً (مستثناة من Git)
+    └── reports/            # تنشأ تلقائياً (مستثناة من Git)
 ```
 
 ---
 
 # ▶️ تشغيل المشروع
 
-## تشغيل النظام
+## تشغيل المحاكاة مع الجدولة (كل دقيقة)
 
 ```bash
 python main.py
 ```
+
+## تشغيل الفحص مرة وحدة فقط
+
+```bash
+python main.py --once
+```
+
+> جربي تعدلين إعدادات أي جهاز في `devices.json` وتشغلين مرة ثانية: النظام بيكتشف التغيير، ويسوي نسخة احتياطية جديدة، ويسجل تنبيه، ويطلع تقرير بالفرق.
+
+## الاتصال بجهاز Cisco حقيقي
+
+انسخي `.env.example` باسم `.env` وعبّي بيانات الجهاز (الملف مستثنى من Git فما تنرفع كلمة المرور):
+
+```bash
+cp .env.example .env
+python connect_device.py     # اختبار الاتصال
+python show_interfaces.py    # حالة الواجهات
+python backup_config.py      # نسخة احتياطية من الإعدادات
+```
+
+يمكن التجربة على Cisco DevNet Sandbox المجاني.
 
 ## تشغيل لوحة التحكم
 
@@ -126,7 +145,6 @@ http://127.0.0.1:5000
 
 ✅ تخزين ملفات Backup
 
-✅ إنشاء ملف backup.txt
 
 ---
 
@@ -239,12 +257,24 @@ http://127.0.0.1:5000
 * تنفيذ أوامر Cisco عبر SSH
 * عرض معلومات الواجهات
 * سحب Running Configuration
-* حفظ النسخة الاحتياطية داخل backup.txt
+* حفظ النسخة الاحتياطية من الجهاز الحقيقي
 * الانتقال من المحاكاة إلى بيئة شبكات حقيقية
 
 ---
 
-# 🚀 التطويرات القادمة (v10)
+# 🆕 الإصدار العاشر (v10)
+
+* إصلاح تحميل الأجهزة (devices.json رجع قائمة أجهزة)
+* نقل بيانات SSH إلى ملف .env بدل كتابتها في الكود
+* مقارنة إعدادات كل جهاز مع آخر نسخة احتياطية له
+* نسخة احتياطية جديدة وتنبيه فقط عند وجود تغيير
+* تقرير تغييرات لكل الأجهزة
+* خيار `--once` للتشغيل مرة وحدة
+* تصحيح سكربتات الاتصال الحقيقي (show version / show ip interface brief / backup)
+
+---
+
+# 🚀 التطويرات القادمة (v11)
 
 * دمج الاتصال الحقيقي داخل Dashboard
 * إضافة زر Backup من الواجهة

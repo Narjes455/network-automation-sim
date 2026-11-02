@@ -1,7 +1,9 @@
+import argparse
+
 from core.device_loader import load_devices
 from core.simulator import NetworkSimulator
 from core.config_manager import save_config
-from core.backup_manager import create_backup
+from core.backup_manager import create_backup, get_latest_backup
 from core.logger import log
 from core.report_generator import generate_report
 from core.diff_engine import compare_configs
@@ -9,58 +11,55 @@ from core.alert_manager import create_alert
 from core.scheduler import run_scheduler
 
 
-print("🚀 Starting Network Automation Simulation...")
-
-
 def backup_job():
 
     sim = NetworkSimulator()
+    changes = {}
 
-    devices = load_devices()
+    for device in load_devices():
 
-    for device in devices:
-
-        # إضافة الجهاز للمحاكي
+        # إضافة الجهاز للمحاكي وحفظ إعداداته الحالية
         sim.add_device(device)
-
-        # حفظ الإعدادات
         save_config(device)
 
-        # إنشاء نسخة احتياطية
-        backup_file = create_backup(device)
+        # مقارنة الإعدادات الحالية مع آخر نسخة احتياطية
+        last_backup = get_latest_backup(device)
 
-        # تسجيل العملية
-        log(f"Backup created for {device.name}")
+        if last_backup is None:
+            backup_file = create_backup(device)
+            log(f"First backup created for {device.name}")
+            print(f"✅ {device.name}: first backup -> {backup_file}")
+            continue
 
-        # عرض النتيجة
-        print(f"✅ Backup created: {backup_file}")
+        diff = compare_configs(last_backup, device.config)
 
-    # اختبار اكتشاف التغييرات
-    with open("data/configs/previous_config.txt", "r") as old_file:
-        old_config = old_file.read()
+        if diff:
+            changes[device.name] = diff
+            backup_file = create_backup(device)
+            create_alert(f"Configuration change detected on {device.name}")
+            log(f"ALERT: Configuration change detected on {device.name}")
+            print(f"⚠ {device.name}: change detected, new backup -> {backup_file}")
+        else:
+            print(f"✔ {device.name}: no changes")
 
-    with open("data/configs/current_config.txt", "r") as new_file:
-        new_config = new_file.read()
-
-    changes = compare_configs(old_config, new_config)
-
-    if changes:
-        print("⚠ Configuration change detected!")
-
-        alert_file = create_alert(
-            "Configuration change detected"
-        )
-
-        print(f"🚨 Alert saved: {alert_file}")
-
-        log("ALERT: Configuration change detected")
-
-    # إنشاء التقرير
-    report_file = generate_report()
-
-    print(f"\n📄 Change report created: {report_file}")
-
-    print("🎉 All devices processed successfully")
+    report_file = generate_report(changes)
+    print(f"📄 Change report: {report_file}")
+    print("🎉 All devices processed successfully\n")
 
 
-run_scheduler(backup_job)
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Network Automation Simulation")
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="تشغيل الفحص مرة وحدة بدون جدولة",
+    )
+    args = parser.parse_args()
+
+    print("🚀 Starting Network Automation Simulation...")
+
+    backup_job()
+
+    if not args.once:
+        run_scheduler(backup_job)

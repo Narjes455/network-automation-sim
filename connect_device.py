@@ -1,23 +1,18 @@
+"""اختبار الاتصال بجهاز Cisco حقيقي عبر SSH وعرض معلومات الجهاز (show version)."""
 from netmiko import ConnectHandler
 
-device = {
-    "device_type": "cisco_xe",
-    "host": "10.10.20.48",
-    "username": "developer",
-    "password": "C1sco12345",
-}
+from core.ssh_settings import get_ssh_device
 
-print("Connecting...")
+device = get_ssh_device()
 
-connection = ConnectHandler(**device)
+try:
+    print(f"Connecting to {device['host']}...")
+    connection = ConnectHandler(**device)
+    print("Connected Successfully!")
 
-print("Connected Successfully!")
+    print(connection.send_command("show version"))
 
-config = connection.send_command("show running-config")
+    connection.disconnect()
 
-with open("backup.txt", "w", encoding="utf-8") as f:
-    f.write(config)
-
-print("Backup Saved!")
-
-connection.disconnect()
+except Exception as e:
+    print(f"Error: {e}")

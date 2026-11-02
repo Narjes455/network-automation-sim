@@ -1,2 +1,5 @@
+hostname Switch1
 vlan 10
-name SALES
+ name SALES
+vlan 20
+ name IT_DEPT

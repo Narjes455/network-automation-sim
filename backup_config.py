@@ -1,21 +1,30 @@
+"""سحب الـ running-config من جهاز Cisco حقيقي وحفظه كنسخة احتياطية بتاريخ ووقت."""
+import os
+from datetime import datetime
+
 from netmiko import ConnectHandler
 
-device = {
-    "device_type": "cisco_xe",
-    "host": "10.10.20.48",
-    "username": "developer",
-    "password": "C1sco12345",
-    "port": 22,
-}
+from core.ssh_settings import get_ssh_device
 
-print("Connecting...")
+device = get_ssh_device()
 
-connection = ConnectHandler(**device)
+try:
+    print(f"Connecting to {device['host']}...")
+    connection = ConnectHandler(**device)
+    print("Connected Successfully!")
 
-print("Connected Successfully!")
+    config = connection.send_command("show running-config")
+    connection.disconnect()
 
-output = connection.send_command("show version")
+    folder = f"data/backups/{device['host']}"
+    os.makedirs(folder, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    path = f"{folder}/{timestamp}.txt"
 
-print(output)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(config)
 
-connection.disconnect()
+    print(f"Backup Saved: {path}")
+
+except Exception as e:
+    print(f"Error: {e}")

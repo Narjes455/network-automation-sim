@@ -1,2 +1,0 @@
-vlan 10
-name SALES

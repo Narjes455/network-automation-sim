@@ -1,20 +1,15 @@
+"""عرض حالة الواجهات في جهاز Cisco حقيقي (show ip interface brief)."""
 from netmiko import ConnectHandler
 
-router = {
-    "device_type": "cisco_xe",
-    "host": "10.10.20.48",
-    "username": "developer",
-    "password": "C1sco12345",
-}
+from core.ssh_settings import get_ssh_device
+
+device = get_ssh_device()
 
 try:
-    print("Connecting...")
+    print(f"Connecting to {device['host']}...")
+    conn = ConnectHandler(**device)
 
-    conn = ConnectHandler(**router)
-
-    output = conn.send_command("show version")
-
-    print(output)
+    print(conn.send_command("show ip interface brief"))
 
     conn.disconnect()
 

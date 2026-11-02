@@ -1,7 +1,10 @@
+import os
 from datetime import datetime
 
 
 def log(message):
+
+    os.makedirs("reports", exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

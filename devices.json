@@ -1,5 +1,20 @@
-{
-  "host": "10.10.20.48",
-  "username": "YOUR_USERNAME",
-  "password": "YOUR_PASSWORD"
-}
+[
+  {
+    "name": "Router1",
+    "ip": "192.168.1.1",
+    "type": "router",
+    "config": "hostname Router1\ninterface g0/0\n ip address 192.168.1.1 255.255.255.0\n no shutdown"
+  },
+  {
+    "name": "Switch1",
+    "ip": "192.168.1.2",
+    "type": "switch",
+    "config": "hostname Switch1\nvlan 10\n name SALES\nvlan 20\n name IT"
+  },
+  {
+    "name": "Firewall1",
+    "ip": "192.168.1.254",
+    "type": "firewall",
+    "config": "hostname Firewall1\naccess-list 100 permit tcp any any eq 80\naccess-list 100 permit tcp any any eq 443\naccess-list 100 deny ip any any"
+  }
+]
